@@ -17,7 +17,7 @@ const userSchema= new mangoose.Schema({
         required:true,
     },
     
-},{timestamps:true})
+},  { timestamps: true })
 
 const User=mongoose.model('User',userSchema);
 
