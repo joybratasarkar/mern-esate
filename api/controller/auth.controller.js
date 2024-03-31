@@ -39,12 +39,11 @@ export const signin = async (req, res, next) => {
             return next(errorHandler(404, 'User not found!!'))
         const isValidPass = await bcryptjs.compareSync(password, validUser.password);
         if (!isValidPass)
-            return next(errorHandler(403, "Wrong cridential!"));
+            return next(errorHandler(401, "Wrong cridential!"));
         let token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET)
         const expires = new Date();
         expires.setDate(expires.getDate() + 7);
-        const {password:pass,...rest}=validUser._doc
-        ;
+        const { password: pass, ...rest } = validUser._doc;            
         res.cookie('access_token', token, { httpOnly: true, expires: expires }).status(200).json(rest)
     }
     catch (error) {
