@@ -53,7 +53,6 @@ export default function profile() {
         <input
           onChange={(e) => setFile(e.target.files[0])}
           type="file" ref={fileRef} hidden accept='image/*' />
-
         <img
           onClick={() => fileRef.current.click()}
           className='rounded-full h-24 w-24 mt-2 object-cover cursor-pointer self-center'
