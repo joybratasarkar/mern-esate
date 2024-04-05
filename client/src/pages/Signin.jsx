@@ -9,11 +9,10 @@ import {
 } from '../redux/userSlice';
 import OAuth from '../components/OAuth';
 
-
 export default function Signin() {
   const env = 'http://localhost:3000/'
   const [formData, setFormData] = useState({})
-  const {loading,error}=useSelector((state)=> state.user)
+  const { loading, error } = useSelector((state) => state.user)
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -26,30 +25,44 @@ export default function Signin() {
   const handelSubmit = async (e) => {
     e.preventDefault();
 
-
     try {
-      dispatch(signInStart())
+      var headers = new Headers();
+      headers.append('Content-Type', 'application/json');
+      headers.append('Accept', 'application/json');
+      dispatch(signInStart());
       const res = await fetch(`${env}api/auth/signin`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
+        credentials: "include",
         body: JSON.stringify(formData),
       });
 
-      const data = await res.json();
-      if (data.success == false) {
-       dispatch(signInFailure(data.message))
-        return
+      if (!res.ok) {
+        // Handle non-successful responses
+        const errorData = await res.json();
+        dispatch(signInFailure(errorData.message));
+        return;
       }
-    dispatch(signInSuccess(data));
+
+      // Extract authorization token from response headers
+      const authToken = await res.headers.get('Authorization');
+
+
+      // Parse response body as JSON
+      const data = await res.json();
+      let updateresponse = { ...data, authToken }
+
+      // Dispatch action to indicate successful sign-in along with any other relevant data
+      dispatch(signInSuccess(updateresponse));
+
+      // Navigate to the desired location after successful sign-in
       navigate('/');
     } catch (error) {
-      dispatch(signInFailure(data.message))
+      // Handle any unexpected errors
+      dispatch(signInFailure(error.message));
+    }
+  };
 
-    };
-
-  }
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl text-center font-semibold my-7'>
@@ -61,7 +74,7 @@ export default function Signin() {
         <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>
           {loading ? 'Loading...' : 'Sign In'}
         </button>
-        <OAuth/>
+        <OAuth />
       </form>
       <div className='flex gap-2 mt-5 mb-5 items-center justify-between w-full'>
         <p> Don't have a account  </p>
