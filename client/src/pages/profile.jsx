@@ -10,6 +10,7 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  deleteUserFailure, deleteUserSuccess, deleteUser
 } from '../redux/userSlice';
 import { app } from '../firebase';
 
@@ -79,8 +80,30 @@ export default function profile() {
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
+  
   }
+  const handleDeleteUser = async () => {
+    try {
+      dispatch(deleteUser())
+      const res = await fetch(`${env}api/user/delete/${currentUser?._id}`, {
+        method: 'DELETE',
+        mode: "cors",
+        credentials: "include",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
 
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message))
+    }
+  }
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>
@@ -124,16 +147,16 @@ export default function profile() {
 
       </form>
       <div className='flex justify-between mt-5'>
-        <span className='text-red-700 cursor-pointer'>Delete Account</span>
+        <span  onClick={handleDeleteUser} className='text-red-700 cursor-pointer'>Delete Account</span>
         <span className='text-red-700 cursor-pointer'>Sign Out</span>
 
       </div>
-      <div class='flex justify-center'>
-        <div class='flex justify-between'>
-          <p class='text-red-700 mt-5'>
+      <div className='flex justify-center'>
+        <div className='flex justify-between'>
+          <p className='text-red-700 mt-5'>
             {error ? error : ''}
           </p>
-          <p class='text-green-700 mt-5'>
+          <p className='text-green-700 mt-5'>
             {updateSuccess ? 'User is updated successfully' : ''}
           </p>
         </div>

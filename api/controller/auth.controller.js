@@ -39,8 +39,8 @@ export const signup = async (req, res, next) => {
 
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
-  
-try {
+
+  try {
     const validUser = await User.findOne({ email });
     if (!validUser) return next(errorHandler(404, 'User not found!'));
 
@@ -64,15 +64,16 @@ try {
   }
 };
 
-
 export const google = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (user) {
       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
       const { password: pass, ...rest } = user._doc;
+      res.set('Authorization', `Bearer ${token}`);
+      res.cookie('access_token', token, { httpOnly: false });
+
       res
-        .cookie('access_token', token, { httpOnly: true })
         .status(200)
         .json(rest);
     } else {
@@ -91,15 +92,14 @@ export const google = async (req, res, next) => {
       await newUser.save();
       const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
       const { password: pass, ...rest } = newUser._doc;
-      console.log('token',token);
+      res.set('Authorization', `Bearer ${token}`);
+      res.cookie('access_token', token, { httpOnly: false });
+
       res
-        .cookie('access_token', token, { httpOnly: true })
         .status(200)
         .json(rest);
     }
   } catch (error) {
-    console.error("Error generating token:", error);
-
     next(error);
   }
 };
