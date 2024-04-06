@@ -70,12 +70,36 @@ const userSlice = createSlice({
                 error: action.payload,
                 loading: false
             }
+        },
+
+
+        signOutUser: (state, action) => {
+            return {
+                ...state,
+                loading: true
+            }
+        },
+        signOutUserSuccess: (state, action) => {
+            return {
+                ...state,
+                loading: false,
+                currentUser: null,
+                error: null
+            }
+        },
+        signOutUserFailure: (state, action) => {
+            return {
+                ...state,
+                error: action.payload,
+                loading: false
+            }
         }
 
     }
 });
 export const { signInStart, signInSuccess, signInFailure, updateUserStart,
-    updateUserSuccess, updateUserFailure,deleteUserFailure,deleteUserSuccess,deleteUser } = userSlice.actions;
+    updateUserSuccess, updateUserFailure,deleteUserFailure,deleteUserSuccess,deleteUser,
+    signOutUser, signOutUserSuccess,signOutUserFailure} = userSlice.actions;
 
 // The function below is called a selector. It selects the value of the 'contacts   
 

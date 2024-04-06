@@ -10,7 +10,8 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
-  deleteUserFailure, deleteUserSuccess, deleteUser
+  deleteUserFailure, deleteUserSuccess, deleteUser,
+  signOutUser, signOutUserSuccess,signOutUserFailure
 } from '../redux/userSlice';
 import { app } from '../firebase';
 
@@ -60,7 +61,7 @@ export default function profile() {
     try {
       dispatch(updateUserStart());
       console.log('formData', formData);
-      const res = await fetch(`${env}api/user/update/${currentUser?._id}`, {
+      const res = await fetch(`${env}api/auth/signout/${currentUser?._id}`, {
         method: 'PUT',
         mode: "cors",
         credentials: "include",
@@ -80,7 +81,7 @@ export default function profile() {
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
-  
+
   }
   const handleDeleteUser = async () => {
     try {
@@ -102,6 +103,28 @@ export default function profile() {
 
     } catch (error) {
       dispatch(deleteUserFailure(error.message))
+    }
+  }
+  const handleSignOut = async () => {
+    try {
+      
+      dispatch(signOutUser());
+
+      const resp = await fetch(`${env}api/auth/signout`, {
+        credentials: "include",
+      })
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(signOutUserFailure(data.message));
+        return;
+      }
+      localStorage.clear();
+
+      dispatch(signOutUserSuccess(data));
+
+    }
+    catch (error) {
+      dispatch(signOutUserFailure(data.message));
     }
   }
   return (
@@ -147,8 +170,8 @@ export default function profile() {
 
       </form>
       <div className='flex justify-between mt-5'>
-        <span  onClick={handleDeleteUser} className='text-red-700 cursor-pointer'>Delete Account</span>
-        <span className='text-red-700 cursor-pointer'>Sign Out</span>
+        <span onClick={handleDeleteUser} className='text-red-700 cursor-pointer'>Delete Account</span>
+        <span onClick={handleSignOut} className='text-red-700 cursor-pointer'>Sign Out</span>
 
       </div>
       <div className='flex justify-center'>
