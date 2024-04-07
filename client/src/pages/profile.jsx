@@ -125,6 +125,8 @@ export default function profile() {
     }
   };
 
+
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>
@@ -165,7 +167,7 @@ export default function profile() {
         <button disabled={loading} className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-95'>
           {loading ? 'loading...' : 'Update'}
         </button>
-
+ 
       </form>
       <div className='flex justify-between mt-5'>
         <span onClick={handleDeleteUser} className='text-red-700 cursor-pointer'>Delete Account</span>
