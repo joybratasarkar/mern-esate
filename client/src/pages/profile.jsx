@@ -11,9 +11,10 @@ import {
   updateUserSuccess,
   updateUserFailure,
   deleteUserFailure, deleteUserSuccess, deleteUser,
-  signOutUser, signOutUserSuccess,signOutUserFailure
+  signOutUser, signOutUserSuccess, signOutUserFailure
 } from '../redux/userSlice';
 import { app } from '../firebase';
+import { persistStore } from 'redux-persist';
 
 export default function profile() {
   const env = 'http://localhost:3000/'
@@ -105,28 +106,25 @@ export default function profile() {
       dispatch(deleteUserFailure(error.message))
     }
   }
+
+
   const handleSignOut = async () => {
     try {
-      
-      dispatch(signOutUser());
 
-      const resp = await fetch(`${env}api/auth/signout`, {
-        credentials: "include",
-      })
+      dispatch(signOutUser());
+      const res = await fetch(`${env}api/auth/signout`);
       const data = await res.json();
       if (data.success === false) {
         dispatch(signOutUserFailure(data.message));
         return;
       }
-      localStorage.clear();
-
       dispatch(signOutUserSuccess(data));
 
-    }
-    catch (error) {
+    } catch (error) {
       dispatch(signOutUserFailure(data.message));
     }
-  }
+  };
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl font-semibold text-center my-7'>

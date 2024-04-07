@@ -1,4 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { persistReducer } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 const initialState = {
     currentUser: null,
@@ -93,14 +95,17 @@ const userSlice = createSlice({
                 error: action.payload,
                 loading: false
             }
-        }
+        },
+        clearState: () => initialState
+
 
     }
 });
 export const { signInStart, signInSuccess, signInFailure, updateUserStart,
     updateUserSuccess, updateUserFailure,deleteUserFailure,deleteUserSuccess,deleteUser,
-    signOutUser, signOutUserSuccess,signOutUserFailure} = userSlice.actions;
+    signOutUser, signOutUserSuccess,signOutUserFailure,clearState} = userSlice.actions;
 
 // The function below is called a selector. It selects the value of the 'contacts   
 
 export default userSlice.reducer;
+

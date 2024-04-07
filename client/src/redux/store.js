@@ -3,22 +3,25 @@ import userReducer from './userSlice';
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-const rootReducer = combineReducers({ user: userReducer });
+const rootReducer = combineReducers({
+  user: userReducer
+});
 
 const persistConfig = {
   key: 'root',
   storage,
   version: 1,
 };
-
+/* blacklist: ['user'] // Specify 'user' slice in blacklist to not persist it
+ */
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 export const store = configureStore({
   reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
+  middleware: getDefaultMiddleware => 
     getDefaultMiddleware({
-      serializableCheck: false,
-    }),
+      serializableCheck: false // Disable serializable check to allow non-serializable data
+    })
 });
 
 export const persistor = persistStore(store);
