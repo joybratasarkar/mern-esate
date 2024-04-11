@@ -63,7 +63,7 @@ export default function profile() {
     try {
       dispatch(updateUserStart());
       console.log('formData', formData);
-      const res = await fetch(`${env}api/auth/signout/${currentUser?._id}`, {
+      const res = await fetch(`${env}api/user/update/${currentUser?._id}`, {
         method: 'PUT',
         mode: "cors",
         credentials: "include",
